@@ -34,8 +34,12 @@ python -m src.train
 uvicorn api.main:app --reload
 ```
 
-## Open Frontend
-Open `frontend/index.html` in a browser.
+## Run Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ## Single Image Prediction
 ```bash
