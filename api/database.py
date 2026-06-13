@@ -19,12 +19,14 @@ async def connect_db():
         # Create client with connection pooling and SSL CA file for cloud environments
         client = AsyncIOMotorClient(
             MONGODB_URI,
+            tls=True,
+            tlsAllowInvalidCertificates=True,
             tlsCAFile=certifi.where(),
             maxPoolSize=50,  # Connection pool size
             minPoolSize=5,   # Minimum connections
             maxIdleTimeMS=30000,  # Close idle connections after 30 seconds
-            serverSelectionTimeoutMS=5000,  # Give a bit more time for cloud handshakes
-            connectTimeoutMS=5000,
+            serverSelectionTimeoutMS=10000,  # Increased timeout for cloud
+            connectTimeoutMS=10000,
             retryWrites=True,  # Retry failed writes
             w="majority"  # Write concern
         )
