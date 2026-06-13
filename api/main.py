@@ -126,6 +126,25 @@ async def analyze_skin(file: UploadFile = File(...)):
     )
 
 
+from fastapi.responses import FileResponse
+
+# Serve React Frontend Static Files
+frontend_dist = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "dist")
+
+if os.path.exists(frontend_dist):
+    # Mount the /assets folder which contains Vite's built JS and CSS
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend_assets")
+    
+    # Catch-all route to serve the React index.html for client-side routing
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        path = os.path.join(frontend_dist, full_path)
+        if os.path.isfile(path):
+            return FileResponse(path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
