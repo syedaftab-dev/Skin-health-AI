@@ -1,6 +1,6 @@
 # 🩺 SkinHealth AI — AI-Powered Skin Diagnosis & Clinic Management
 
-![SkinHealth AI Banner](https://via.placeholder.com/1200x400.png?text=SkinHealth+AI+-+AI-Powered+Dermatology+Platform) <!-- Replace with your actual banner -->
+![SkinHealth AI Banner](./uploads/image.png) <!-- Replace with your actual banner -->
 
 **SkinHealth AI** is a comprehensive, end-to-end platform that leverages cutting-edge deep learning to predict and analyze skin conditions from uploaded images. Beyond its powerful prediction engine, it serves as a full-fledged clinic management system complete with specialized portals for Patients, Doctors, and Administrators.
 
