@@ -11,17 +11,20 @@ DB_NAME = os.getenv("DB_NAME", "skinai")
 client: AsyncIOMotorClient = None
 db = None
 
+import certifi
+
 async def connect_db():
     global client, db
     if client is None:
-        # Create client with connection pooling
+        # Create client with connection pooling and SSL CA file for cloud environments
         client = AsyncIOMotorClient(
             MONGODB_URI,
+            tlsCAFile=certifi.where(),
             maxPoolSize=50,  # Connection pool size
             minPoolSize=5,   # Minimum connections
             maxIdleTimeMS=30000,  # Close idle connections after 30 seconds
-            serverSelectionTimeoutMS=2000,  # Faster server selection (reduced from 5000)
-            connectTimeoutMS=2000,  # Faster connection timeout (reduced from 5000)
+            serverSelectionTimeoutMS=5000,  # Give a bit more time for cloud handshakes
+            connectTimeoutMS=5000,
             retryWrites=True,  # Retry failed writes
             w="majority"  # Write concern
         )
