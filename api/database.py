@@ -16,41 +16,39 @@ def get_db():
     global client, db
     if db is None:
         try:
-            # Check if URI uses TLS / SRV (like MongoDB Atlas)
-            is_cloud = "mongodb+srv://" in MONGODB_URI or "ssl=true" in MONGODB_URI.lower() or "tls=true" in MONGODB_URI.lower()
-            if is_cloud:
+            # Handle MongoDB Atlas SRV URI cleanly without conflicting SSL flags
+            if MONGODB_URI.startswith("mongodb+srv://"):
                 client = MongoClient(
                     MONGODB_URI,
-                    tls=True,
-                    tlsAllowInvalidCertificates=True,
                     tlsCAFile=certifi.where(),
-                    maxPoolSize=50,
-                    minPoolSize=5,
-                    maxIdleTimeMS=30000,
-                    serverSelectionTimeoutMS=10000,
-                    connectTimeoutMS=10000,
-                    retryWrites=True,
-                    w="majority",
+                    maxPoolSize=25,
+                    minPoolSize=1,
+                    serverSelectionTimeoutMS=8000,
+                    connectTimeoutMS=8000,
                 )
             else:
                 client = MongoClient(
                     MONGODB_URI,
-                    maxPoolSize=50,
-                    minPoolSize=5,
+                    maxPoolSize=25,
+                    minPoolSize=1,
                     serverSelectionTimeoutMS=5000,
                     connectTimeoutMS=5000,
                 )
             db = client[DB_NAME]
             print(f"Connected to MongoDB: {DB_NAME}")
         except Exception as e:
-            print(f"Warning: Failed to initialize MongoDB client: {e}")
-            # Fallback direct connection
-            client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
-            db = client[DB_NAME]
+            print(f"Warning: Primary MongoDB connection failed: {e}")
+            try:
+                client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+                db = client[DB_NAME]
+            except Exception as ex:
+                print(f"Fallback connection also failed: {ex}")
+                raise
     return db
 
 
 def init_indexes():
+    """Create indexes safely without raising unhandled errors."""
     try:
         database = get_db()
         database.users.create_index("email", unique=True)
@@ -66,8 +64,9 @@ def init_indexes():
         database.doctor_availability.create_index("doctor_id")
         database.blocked_slots.create_index("doctor_id")
         database.consultations.create_index("appointment_id", unique=True)
+        print("MongoDB indexes initialized successfully.")
     except Exception as e:
-        print(f"Warning during index creation: {e}")
+        print(f"Notice during index creation (non-fatal): {e}")
 
 
 def connect_db():

@@ -14,8 +14,7 @@ root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
 
-from src.predict import predict_image, load_inference_model
-from src.recommend import format_recommendation
+
 
 
 @csrf_exempt

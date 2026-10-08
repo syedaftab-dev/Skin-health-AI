@@ -13,15 +13,10 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import ISIC_CLASSES, CLASS_NAMES, SEVERITY_MAP
 
-if TORCH_AVAILABLE:
-    from src.dataset import get_predict_transforms
-    from src.model import load_model
-else:
-    def get_predict_transforms(): return None
-    def load_model(*args, **kwargs): return None
-
-
 def load_inference_model(device=None):
+    if not TORCH_AVAILABLE:
+        return None, None
+    from src.model import load_model
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = load_model(num_classes=len(ISIC_CLASSES), device=device)
@@ -54,7 +49,8 @@ def predict_image(image_input, model=None, device=None):
     if model is None:
         model, device = load_inference_model()
 
-    transform = get_predict_transforms()
+        from src.dataset import get_predict_transforms
+        transform = get_predict_transforms()
 
     if isinstance(image_input, str):
         image = Image.open(image_input).convert("RGB")

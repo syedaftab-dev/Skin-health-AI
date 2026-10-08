@@ -10,13 +10,9 @@ from django.views.decorators.csrf import csrf_exempt
 from api.database import get_db
 from api.auth.decorators import jwt_required, require_role
 
-# Add root directory to sys.path
 root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
-
-from src.predict import predict_image, load_inference_model
-from src.recommend import format_recommendation
 
 _model = None
 _device = None
@@ -26,6 +22,7 @@ def get_model():
     global _model, _device
     if _model is None:
         try:
+            from src.predict import load_inference_model
             _model, _device = load_inference_model()
         except Exception as e:
             print(f"Model load notice: {e}")
@@ -44,6 +41,9 @@ def upload_and_predict(request, user):
     uploaded_file = request.FILES["file"]
     if not uploaded_file.content_type.startswith("image/"):
         return JsonResponse({"detail": "File must be an image"}, status=400)
+
+    from src.predict import predict_image
+    from src.recommend import format_recommendation
 
     model, device = get_model()
 

@@ -2,29 +2,12 @@ import os
 import io
 import sys
 from PIL import Image
-from django.http import JsonResponse, HttpResponse, FileResponse, Http404
+from django.http import JsonResponse, FileResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 
 root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if root_dir not in sys.path:
     sys.path.insert(0, root_dir)
-
-from src.predict import predict_image, load_inference_model
-from src.recommend import format_recommendation
-
-_model = None
-_device = None
-
-
-def get_inference_model():
-    global _model, _device
-    if _model is None:
-        try:
-            _model, _device = load_inference_model()
-        except Exception as e:
-            print(f"ML Model load notice: {e}")
-            _model = None
-    return _model, _device
 
 
 @csrf_exempt
@@ -44,10 +27,8 @@ def root_view(request):
 
 @csrf_exempt
 def health_check(request):
-    model, _ = get_inference_model()
     return JsonResponse({
         "status": "ok",
-        "model_loaded": model is not None,
         "framework": "Django",
         "version": "2.0.0",
     }, status=200)
@@ -65,7 +46,15 @@ def analyze_skin(request):
     if not uploaded_file.content_type.startswith("image/"):
         return JsonResponse({"detail": "File must be an image."}, status=400)
 
-    model, device = get_inference_model()
+    # Lazy-load prediction modules only when an image is uploaded
+    try:
+        from src.predict import predict_image, load_inference_model
+        from src.recommend import format_recommendation
+        model, device = load_inference_model()
+    except Exception as e:
+        print(f"Model load notice: {e}")
+        model, device = None, None
+
     contents = uploaded_file.read()
 
     try:
@@ -75,10 +64,9 @@ def analyze_skin(request):
 
     try:
         prediction = predict_image(image, model=model, device=device)
+        recommendation = format_recommendation(prediction)
     except Exception as e:
         return JsonResponse({"detail": f"Prediction failed: {str(e)}"}, status=500)
-
-    recommendation = format_recommendation(prediction)
 
     return JsonResponse({
         "prediction": prediction,
