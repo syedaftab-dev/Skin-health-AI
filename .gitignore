@@ -5,7 +5,9 @@ __pycache__/
 *.pyc
 node_modules/
 models/saved/
+db.sqlite3
+staticfiles/
 
 .DS_Store
 dist/
-build/``
+build/

@@ -1,30 +1,31 @@
 import os
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from dotenv import load_dotenv
 
 load_dotenv()
- 
-SECRET_KEY = os.getenv("JWT_SECRET", "skinai_dev_secret")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRY_MINUTES", "1440"))
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = os.getenv("JWT_SECRET") or os.getenv("SECRET_KEY") or "skinai_dev_secret"
+ALGORITHM = os.getenv("JWT_ALGORITHM") or os.getenv("ALGORITHM") or "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRY_MINUTES") or os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES") or "1440")
 
 
 def hash_password(password: str) -> str:
-    # Truncate password to 72 characters to avoid bcrypt limitation
-    if len(password) > 72:
-        password = password[:72]
-    return pwd_context.hash(password)
+    """Hash password using direct bcrypt library, avoiding passlib version bug."""
+    pwd_bytes = password.encode("utf-8")[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    # Truncate password to 72 characters to avoid bcrypt limitation
-    if len(plain_password) > 72:
-        plain_password = plain_password[:72]
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify password against bcrypt hash."""
+    try:
+        pwd_bytes = plain_password.encode("utf-8")[:72]
+        hash_bytes = hashed_password.encode("utf-8")
+        return bcrypt.checkpw(pwd_bytes, hash_bytes)
+    except Exception:
+        return False
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
