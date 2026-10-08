@@ -41,7 +41,7 @@ const Sidebar = () => {
     { to: '/doctor/clinic', icon: <Settings size={20} />, label: 'Clinic Settings' },
     { to: '/doctor/profile', icon: <UserCircle size={20} />, label: 'Profile' },
   ];
-
+  
   const adminLinks = [
     { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { to: '/admin/doctors', icon: <ShieldCheck size={20} />, label: 'Manage Doctors' },

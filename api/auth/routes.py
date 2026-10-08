@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
-
+  
 class PatientRegister(BaseModel):
     name: str
     email: str

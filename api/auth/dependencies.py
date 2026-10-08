@@ -7,7 +7,7 @@ from functools import wraps
 
 security = HTTPBearer()
 
-
+ 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     payload = decode_access_token(token)

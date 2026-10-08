@@ -10,7 +10,7 @@ const Header = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle('dark');
   };
-
+  
   return (
     <header className="h-16 border-b-2 border-foreground flex items-center justify-between px-8 bg-card sticky top-0 z-10">
       <div className="flex items-center gap-4">

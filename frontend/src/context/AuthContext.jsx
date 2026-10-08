@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     
     console.log('Token:', token);
     console.log('Stored user:', storedUser);
-
+   
     if (token && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);

@@ -8,7 +8,7 @@ except (ImportError, OSError):
 
 from PIL import Image
 import os
-import sys
+import sys  
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import ISIC_CLASSES, CLASS_NAMES, SEVERITY_MAP

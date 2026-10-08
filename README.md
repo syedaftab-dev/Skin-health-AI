@@ -11,7 +11,7 @@
 ### 🧠 Machine Learning Engine
 - **Accurate Diagnosis**: Classifies 9 different classes of skin lesions, including Melanoma, Basal Cell Carcinoma, and Nevus.
 - **Deep Learning Architecture**: Built on PyTorch and `timm` (PyTorch Image Models) with robust data augmentation (`albumentations`).
-- **Real-Time Inference**: FastAPI-powered inference engine delivering immediate analysis and customized recommendations based on condition severity.
+- **Real-Time Inference**: Django-powered inference engine delivering immediate analysis and customized recommendations based on condition severity.
 
 ### 🌐 Patient Portal
 - **Dashboard**: Track previous predictions, upcoming appointments, and medical history.
@@ -34,7 +34,7 @@
 | Category | Technologies Used |
 |---|---|
 | **Frontend** | React 19, Vite, Tailwind CSS v4, Recharts, Lucide React, Axios |
-| **Backend** | FastAPI, Uvicorn, Python-Jose (JWT), Passlib (Bcrypt) |
+| **Backend** | Django, Python-Jose (JWT), Passlib (Bcrypt) |
 | **Database** | MongoDB (Motor Async Driver, PyMongo) |
 | **Machine Learning** | PyTorch, Torchvision, Scikit-Learn, OpenCV, Albumentations, Pandas |
 
@@ -71,9 +71,9 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-Start the FastAPI backend:
+Start the Django backend:
 ```bash
-uvicorn api.main:app --reload
+python manage.py runserver
 ```
 The API will be available at `http://localhost:8000`.
 
@@ -139,11 +139,11 @@ python -m src.predict --image path/to/skin_lesion.jpg
 
 ```text
 Skin-health-AI/
-├── api/                   # FastAPI Backend
+├── api/                   # Django Backend
 │   ├── auth/              # Authentication & JWT logic
 │   ├── routers/           # API endpoints (admin, doctors, patients, predictions)
 │   ├── database.py        # MongoDB connection setup
-│   └── main.py            # FastAPI application entry point
+│   └── main.py            # Django application entry point
 ├── frontend/              # React + Vite Frontend
 │   ├── src/
 │   │   ├── components/    # Reusable UI components
@@ -176,6 +176,3 @@ Contributions, issues, and feature requests are welcome!
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

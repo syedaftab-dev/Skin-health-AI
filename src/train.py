@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from tqdm import tqdm
 import os
-import sys
+import sys 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import EPOCHS, LEARNING_RATE, DATA_TRAIN_DIR
 from src.dataset import get_dataloaders, get_class_weights, AlbumentationsWrapper, get_train_transforms
@@ -16,7 +16,7 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
     total_loss = 0.0
     correct = 0
     total = 0
-
+  
     for images, labels in tqdm(loader, desc="Training"):
         images, labels = images.to(device), labels.to(device)
         optimizer.zero_grad()
