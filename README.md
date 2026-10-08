@@ -1,178 +1,217 @@
-# 🩺 SkinHealth AI — AI-Powered Skin Diagnosis & Clinic Management
+# SkinHealth AI — Dermatological Diagnosis and Clinic Management Platform
 
-![SkinHealth AI Banner](./uploads/image.png) <!-- Replace with your actual banner -->
-
-**SkinHealth AI** is a comprehensive, end-to-end platform that leverages cutting-edge deep learning to predict and analyze skin conditions from uploaded images. Beyond its powerful prediction engine, it serves as a full-fledged clinic management system complete with specialized portals for Patients, Doctors, and Administrators.
-
----
-
-## ✨ Features
-
-### 🧠 Machine Learning Engine
-- **Accurate Diagnosis**: Classifies 9 different classes of skin lesions, including Melanoma, Basal Cell Carcinoma, and Nevus.
-- **Deep Learning Architecture**: Built on PyTorch and `timm` (PyTorch Image Models) with robust data augmentation (`albumentations`).
-- **Real-Time Inference**: Django-powered inference engine delivering immediate analysis and customized recommendations based on condition severity.
-
-### 🌐 Patient Portal
-- **Dashboard**: Track previous predictions, upcoming appointments, and medical history.
-- **Image Upload & Analysis**: Securely upload skin images for instant AI assessment.
-- **Book Appointments**: Browse doctors, view their schedules, and seamlessly book consultations.
-
-### 👨‍⚕️ Doctor Portal
-- **Appointment Management**: Accept, reject, or manage daily schedules.
-- **Patient History**: Access detailed historical diagnoses and AI prediction reports for assigned patients.
-- **Clinic Settings**: Manage availability, specialization, and consultation fees.
-
-### ⚙️ Admin Dashboard
-- **Platform Analytics**: Monitor platform-wide metrics (appointments, users, predictions).
-- **User Management**: Oversee patient and doctor onboarding.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=flat-square&logo=render)](https://skin-health-ai-r52f.onrender.com/)
+[![Django](https://img.shields.io/badge/Backend-Django%206.1-092E20?style=flat-square&logo=django)](https://www.djangoproject.com/)
+[![React](https://img.shields.io/badge/Frontend-React%2019%20+%20Vite-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![PyTorch](https://img.shields.io/badge/ML%20Engine-PyTorch%20%7C%20timm-EE4C2C?style=flat-square&logo=pytorch)](https://pytorch.org/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%20v4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
 ---
 
-## 🛠️ Technology Stack
+### Deployment Status
 
-| Category | Technologies Used |
-|---|---|
-| **Frontend** | React 19, Vite, Tailwind CSS v4, Recharts, Lucide React, Axios |
-| **Backend** | Django, Python-Jose (JWT), Passlib (Bcrypt) |
-| **Database** | MongoDB (Motor Async Driver, PyMongo) |
-| **Machine Learning** | PyTorch, Torchvision, Scikit-Learn, OpenCV, Albumentations, Pandas |
+* **Live URL:** [https://skin-health-ai-r52f.onrender.com/](https://skin-health-ai-r52f.onrender.com/)
+* **Platform:** Render (Unified single-instance deployment: React SPA + Django REST API + MongoDB Atlas)
+* **Status:** Operational
+
+#### Test Credentials
+
+| Role | Email | Password | Scope |
+|---|---|---|---|
+| **Patient** | `patient@skinai.com` | `password123` | Lesion image upload, AI prediction history, appointment scheduling |
+| **Doctor** | `doctor@skinai.com` | `password123` | Appointment queue, weekly schedule configuration, clinical notes |
+| **Administrator** | `admin@skinai.com` | `admin123` | Platform analytics, physician credential approvals, account governance |
 
 ---
 
-## 🚀 Getting Started
+## Overview
 
-### 1. Prerequisites
-Ensure you have the following installed:
-- **Python** (v3.10+)
-- **Node.js** (v18+)
-- **MongoDB** (Local or Atlas URL)
+SkinHealth AI is an end-to-end medical software platform integrating deep learning-based skin condition classification with comprehensive clinic workflow management.
 
-### 2. Backend & ML Setup
+The platform provides automated triage and diagnostic insights from dermoscopic and clinical images, mapping conditions to severity tiers and actionable care steps. It pairs this capability with a multi-portal practice management system connecting patients, verified dermatologists, and administrators.
 
-Clone the repository and set up the Python environment:
+---
+
+## System Architecture
+
+```mermaid
+graph TD
+    subgraph Client ["Client Layer (React 19, Vite, Tailwind CSS)"]
+        UI_P["Patient Portal<br/>(Uploads, History, Booking)"]
+        UI_D["Doctor Portal<br/>(Schedule, Consultations, Telemetry)"]
+        UI_A["Admin Portal<br/>(Approvals, Analytics, Governance)"]
+    end
+
+    subgraph Server ["Application Server (Django 6, Gunicorn)"]
+        SPA["SPA Static Handler<br/>(Client-Side Route Fallback)"]
+        AUTH["JWT Authentication<br/>(Bcrypt, Role-Based Access Control)"]
+        ROUTER["REST API Layer<br/>(Predictions, Consultations, Scheduling)"]
+    end
+
+    subgraph Intelligence ["Inference Layer (PyTorch)"]
+        PREDICT["Vision Model<br/>(Lazy Loaded, PyTorch Image Models)"]
+        RECOMMEND["Decision Engine<br/>(Clinical Guidance & Severity Mapping)"]
+    end
+
+    subgraph Data ["Data Layer (MongoDB Atlas Cluster)"]
+        MONGO[("MongoDB Atlas Cloud<br/>Users, Doctors, Appointments, Reports")]
+        MEDIA[("Media Storage<br/>Uploaded Lesion Images")]
+    end
+
+    Client -->|HTTPS / JSON| Server
+    SPA -->|Serves Static Bundle| Client
+    ROUTER --> AUTH
+    ROUTER --> PREDICT
+    PREDICT --> RECOMMEND
+    ROUTER -->|PyMongo TLS Connection Pool| MONGO
+    PREDICT -->|File I/O| MEDIA
+```
+
+---
+
+## Diagnostic Engine
+
+The model classifies uploaded skin lesions across **9 distinct diagnostic categories**:
+
+| Index | Condition | Pathology Category | Clinical Severity |
+|:---:|---|---|:---:|
+| 1 | Actinic Keratosis | Pre-malignant keratinocytic lesion | Medium |
+| 2 | Basal Cell Carcinoma | Non-melanocytic skin malignancy | High |
+| 3 | Dermatofibroma | Benign dermal dendritic histiocytoma | Low |
+| 4 | Melanoma | Malignant melanocytic neoplasm | High (Immediate Attention) |
+| 5 | Nevus | Benign melanocytic proliferation | Low |
+| 6 | Pigmented Benign Keratosis | Benign seborrheic / solar lentigo | Low |
+| 7 | Seborrheic Keratosis | Benign epidermal neoplasm | Low |
+| 8 | Squamous Cell Carcinoma | Invasive keratinizing carcinoma | High |
+| 9 | Vascular Lesion | Benign or reactive vascular proliferation | Medium |
+
+### Model Outputs
+
+For each evaluation, the inference pipeline returns:
+* **Primary Diagnosis**: Common condition name and formal medical terminology.
+* **Confidence Metrics**: Percentage probability and complete class distribution breakdown.
+* **Severity Grading**: Assigned risk tier (`Low`, `Medium`, `High`).
+* **Clinical Protocol**: Guidance on urgent action items, OTC considerations, and medical consultation urgency flags.
+
+---
+
+## Functional Modules
+
+### Patient Interface
+* **Lesion Analysis**: Multi-format image submission with real-time inference feedback.
+* **Specialist Discovery**: Directory search filtered by geographic pincode, clinic name, and medical specialty.
+* **Automated Slot Booking**: Dynamic scheduling engine presenting available 30-minute intervals within a 7-day rolling window.
+* **Medical Timeline**: Consolidated chronological history containing both AI diagnostic reports and physician consultation summaries.
+
+### Physician Interface
+* **Dynamic Availability Configuration**: Customizable weekly recurring schedule with automated interval computation.
+* **Slot Suspension**: Selective date and time blocking for leaves and scheduled downtime.
+* **Electronic Consultation Records**: Interface to record diagnostic notes, write prescriptions, and close patient visits.
+* **Practice Dashboard**: Real-time caseload summary displaying daily visits, pending cases, and historical patient reach.
+
+### Administrative Interface
+* **Physician Onboarding**: Review and approval pipeline verifying medical license credentials and clinic documentation.
+* **System Telemetry**: Platform-wide metrics for appointments, registered accounts, and analysis requests.
+* **Account Moderation**: User account activation and restriction controls.
+
+---
+
+## Technical Specifications
+
+| Component | Stack | Functionality |
+|---|---|---|
+| **Frontend Framework** | React 19, Vite | Single-page client interface |
+| **Styling** | Tailwind CSS v4 | Responsive medical UI design |
+| **Data Visualization** | Recharts, Lucide React | Practice metrics and user telemetry |
+| **Application Server** | Django 6, Gunicorn | API service and static asset host |
+| **Authentication** | JWT (`python-jose`), `bcrypt` | Stateless token authentication |
+| **Database** | MongoDB Atlas (`pymongo`) | Document persistence with TLS pooling |
+| **Computer Vision** | PyTorch, `timm`, Albumentations | Lesion classification neural network |
+| **Deployment** | Render Web Service | Unified production host (`build.sh`, `render.yaml`) |
+
+---
+
+## Local Development Setup
+
+### Prerequisites
+* Python 3.10 or higher
+* Node.js 18 or higher with npm
+* MongoDB Atlas cluster connection string or local MongoDB instance
+
+### 1. Repository Setup
+
 ```bash
 git clone https://github.com/syedaftab-dev/Skin-health-AI.git
 cd Skin-health-AI
+```
 
-# Create a virtual environment
+### 2. Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.sjst1ka.mongodb.net/?appName=Cluster0
+DB_NAME=skinai
+DJANGO_SECRET_KEY=your-django-secret-key
+JWT_SECRET=your-jwt-secret-key
+JWT_ALGORITHM=HS256
+JWT_EXPIRY_MINUTES=1440
+DEBUG=True
+```
+
+### 3. Backend Execution
+
+```bash
+# Initialize Python virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+source venv/bin/activate       # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Run migrations and launch development server
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
 ```
 
-Create a `.env` file in the root directory for your database and JWT secret:
-```env
-MONGODB_URL=mongodb://localhost:27017/skinhealth
-SECRET_KEY=your_super_secret_jwt_key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
+The Django API and admin service will be available at `http://localhost:8000`.
 
-Start the Django backend:
-```bash
-python manage.py runserver
-```
-The API will be available at `http://localhost:8000`.
+### 4. Frontend Execution
 
-### 3. Frontend Setup
+In a separate terminal window:
 
-Open a new terminal window and navigate to the frontend directory:
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start the Vite development server
 npm run dev
 ```
-The application will be accessible at `http://localhost:5173`.
+
+The Vite development server will be available at `http://localhost:5173`.
+
+
+## API Specification
+
+| Route | HTTP | Access | Purpose |
+|---|:---:|:---:|---|
+| `/health` | `GET` | Public | System status check |
+| `/api/auth/register/patient` | `POST` | Public | Register patient account |
+| `/api/auth/register/doctor` | `POST` | Public | Register physician account |
+| `/api/auth/login` | `POST` | Public | Authenticate user and issue JWT |
+| `/api/predict/upload` | `POST` | Patient | Submit lesion image for analysis |
+| `/api/predictions` | `GET` | Patient | List user prediction records |
+| `/api/doctors` | `GET` | Public | Search and list verified physicians |
+| `/api/doctors/{id}/availability` | `GET` | Public | Retrieve 7-day appointment availability |
+| `/api/appointments` | `POST` | Patient | Reserve appointment slot |
+| `/api/appointments/{id}/consultation` | `POST` | Doctor | Submit clinical consultation details |
+| `/api/admin/stats` | `GET` | Admin | Retrieve platform telemetry |
+| `/api/admin/doctors/{id}/approve` | `PUT` | Admin | Authorize pending physician |
 
 ---
 
-## 🧠 Model Training & Prediction Scripts
+## Medical Disclaimer
 
-If you want to train the model from scratch or run batch predictions via the CLI, use the included Python scripts in the `src/` directory.
-
-### Dataset Structure
-Ensure your dataset is organized inside `data/raw/` before training:
-```text
-data/
-  raw/
-    Train/
-      actinic keratosis/
-      basal cell carcinoma/
-      ...
-    Test/
-      ...
-```
-
-### Supported Classes & Severity
-| Condition | Severity |
-|---|---|
-| Actinic Keratosis | Medium |
-| Basal Cell Carcinoma | High |
-| Dermatofibroma | Low |
-| Melanoma | High |
-| Nevus | Low |
-| Pigmented Benign Keratosis | Low |
-| Seborrheic Keratosis | Low |
-| Squamous Cell Carcinoma | High |
-| Vascular Lesion | Medium |
-
-### Training
-```bash
-python -m src.train
-```
-
-### CLI Prediction
-```bash
-python -m src.predict --image path/to/skin_lesion.jpg
-```
+SkinHealth AI is intended for educational, informational, and research purposes only. The software and machine learning models do not provide professional medical advice, clinical diagnosis, or therapeutic recommendations. Patients should consult a board-certified dermatologist or healthcare professional for evaluation of skin lesions or other medical conditions.
 
 ---
-
-## 📂 Project Structure
-
-```text
-Skin-health-AI/
-├── api/                   # Django Backend
-│   ├── auth/              # Authentication & JWT logic
-│   ├── routers/           # API endpoints (admin, doctors, patients, predictions)
-│   ├── database.py        # MongoDB connection setup
-│   └── main.py            # Django application entry point
-├── frontend/              # React + Vite Frontend
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Role-specific pages (Admin, Doctor, Patient)
-│   │   └── context/       # React Context (Auth State)
-├── src/                   # Machine Learning Source Code
-│   ├── dataset.py         # PyTorch Dataset & Augmentations
-│   ├── model.py           # Model Architecture
-│   ├── train.py           # Training loop
-│   └── predict.py         # Inference script
-├── models/                # Saved ML model weights
-├── requirements.txt       # Python dependencies
-└── README.md
-```
-
----
-
-## 🛡️ Disclaimer
-
-> **Important**: This software is for **informational and educational purposes only**. The AI predictions and recommendations are **not a substitute for professional medical advice, diagnosis, or treatment**. Always seek the advice of a qualified healthcare provider or dermatologist with any questions regarding a medical condition.
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
 
